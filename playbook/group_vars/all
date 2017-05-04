@@ -12,6 +12,7 @@ master_instance_size: Tiny
 initial_num_worker_nodes: 3
 worker_security_group_name: "{{ cluster_name }}-worker-sg"
 worker_instance_size: Small
+worker_disk_size: 100
 
 # exoip variables
 exoip_version: "latest"

@@ -11,6 +11,8 @@ VOLUME /secret
 ADD requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+ADD cs_volume_ext.py /playbook/library/cs_volume_ext.py
+
 RUN apt-get update && apt-get install -y vim bash-completion && apt-get clean
 RUN echo 'source <(kubectl completion bash)\n \
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]]\n \
