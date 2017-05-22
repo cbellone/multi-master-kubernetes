@@ -12,7 +12,8 @@ master_instance_size: Tiny
 initial_num_worker_nodes: 3
 worker_security_group_name: "{{ cluster_name }}-worker-sg"
 worker_instance_size: Small
-worker_disk_size: 100
+# 200 GByte is the only supported disk size (now, need to create other partition table for other sizes)
+worker_disk_size: 200
 
 # exoip variables
 exoip_version: "latest"

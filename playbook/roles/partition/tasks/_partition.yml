@@ -3,18 +3,18 @@
   register: need_partition
   ignore_errors: True
 
-- name: Fix Partition
-  shell: cgpt repair /dev/vda
+- name: Copy new Disk Layout
+  copy: src=disk_layout-{{ worker_disk_size }}G.out dest=~/disk_layout-{{ worker_disk_size }}G.out
   when: need_partition | failed
 
 - name: Re-partition
-  shell: parted /dev/vda print free | grep 'Free' | tail -1 | awk '{print $1 " " $2}' | xargs parted -a minimal --script /dev/vda 'mkpart HEKETI ext4'
+  shell: cat ~/disk_layout-200G.out | sudo sfdisk --force /dev/vda ; partprobe
   when: need_partition | failed
 
 - name: Set boot partition
   shell: cgpt prioritize $(rootdev -s /usr)
   when: need_partition | failed
 
-- name: Set successful flas
+- name: Set successful flag
   shell: cgpt add -i 3 -S 1 /dev/vda
   when: need_partition | failed
