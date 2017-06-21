@@ -30,3 +30,31 @@
       ansible_python_interpreter: /home/core/bin/python
     with_items: "{{ created_worker_nodes.results }}"
     when: "'worker_nodes' not in groups or groups['worker_nodes']|length < {{ desired_num_worker_nodes }}"
+
+  - wait_for:
+      port: 22
+      host: "{{ hostvars[item]['ansible_host'] }}"
+      search_regex: OpenSSH
+      delay: 10
+    with_items: "{{ groups['worker_nodes'] }}"
+
+  - name: Stop worker nodes
+    local_action:
+      module: cs_instance
+      display_name: "{{ item }}"
+      state: stopped
+    with_items: "{{ groups['worker_nodes'] }}"
+
+  - name: Update worker nodes (increase root disk size)
+    cs_volume_ext:
+      display_name: "{{ item }}"
+      disk_size: "{{ worker_disk_size }}"
+    with_items: "{{ groups['worker_nodes'] }}"
+
+  - name: Start worker nodes
+    local_action:
+      module: cs_instance
+      display_name: "{{ item }}"
+      state: started
+    with_items: "{{ groups['worker_nodes'] }}"
+    

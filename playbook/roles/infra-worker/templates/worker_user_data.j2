@@ -22,6 +22,9 @@ coreos:
 
     units:
         -
+            name: "extend-filesystems.service"
+            mask: true
+        -
             name: flanneld.service
             command: start
             drop-ins:

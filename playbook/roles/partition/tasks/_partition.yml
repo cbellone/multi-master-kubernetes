@@ -1,0 +1,20 @@
+- name: Check if Re-partition is needed
+  raw: stat /dev/vda5
+  register: need_partition
+  ignore_errors: True
+
+- name: Copy new Disk Layout
+  copy: src=disk_layout-{{ worker_disk_size }}G.out dest=~/disk_layout-{{ worker_disk_size }}G.out
+  when: need_partition | failed
+
+- name: Re-partition
+  shell: cat ~/disk_layout-200G.out | sudo sfdisk --force /dev/vda ; partprobe
+  when: need_partition | failed
+
+- name: Set boot partition
+  shell: cgpt prioritize $(rootdev -s /usr)
+  when: need_partition | failed
+
+- name: Set successful flag
+  shell: cgpt add -i 3 -S 1 /dev/vda
+  when: need_partition | failed

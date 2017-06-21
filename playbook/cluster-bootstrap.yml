@@ -24,6 +24,12 @@
   roles:
     - defunctzombie.coreos-bootstrap
 
+# Partition the worker nodes
+- hosts: worker_nodes
+  become: true
+  roles:
+    - partition
+
 # Gather facts on all nodes
 - hosts: all
   tasks: []
